@@ -1,6 +1,7 @@
 AUTHOR = 'Priyanshu Bishnoi'
 SITENAME = 'CAP Theorem Meets ATMs'
-SITEURL = ""
+SITEURL = "https://priyanshubishnoi.github.io/tech-blog"
+RELATIVE_URLS = False
 DIRECT_TEMPLATES = [
     'index',
     'tags',
