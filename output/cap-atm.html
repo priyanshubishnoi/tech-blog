@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="english">
+  <head>
+        <title>CAP Theorem Meets ATMs - CAP Theorem Meets ATMs</title>
+      <meta charset="utf-8" />
+      <meta name="generator" content="Pelican" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://priyanshubishnoi.github.io/tech-blog/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="CAP Theorem Meets ATMs Full Atom Feed" />
+        <link href="https://priyanshubishnoi.github.io/tech-blog/feeds/distributed-systems.atom.xml" type="application/atom+xml" rel="alternate" title="CAP Theorem Meets ATMs Categories Atom Feed" />
+
+
+
+
+    <meta name="tags" content="CAPTheorem" />
+    <meta name="tags" content="ATM" />
+    <meta name="tags" content="Banking" />
+
+  </head>
+
+  <body>
+      <header>
+          <hgroup><h1><a href="https://priyanshubishnoi.github.io/tech-blog/">CAP Theorem Meets ATMs</a></h1></hgroup>
+          <nav><ul>
+                <li><a href="https://priyanshubishnoi.github.io/tech-blog/category/distributed-systems.html"  aria-current="page" >Distributed Systems</a></li>
+          </ul></nav>
+      </header>
+      <main>
+  <article>
+    <header>
+      <h2>
+        <a href="https://priyanshubishnoi.github.io/tech-blog/cap-atm.html" rel="bookmark"
+           title="Permalink to CAP Theorem Meets ATMs">CAP Theorem Meets ATMs</a></h2>
+      
+    </header>
+    <h2>let’s stitch your whole thought process into one clean storyline — from CAP theorem all the way down to real-world ATMs.</h2>
+<h2>🧩 1. CAP Theorem Basics</h2>
+<ul>
+<li>
+<p>C (Consistency): everyone sees the same data.</p>
+</li>
+<li>
+<p>A (Availability): system always responds.</p>
+</li>
+<li>
+<p>P (Partition tolerance): system survives network splits.</p>
+</li>
+</ul>
+<p>In real distributed systems → P is unavoidable, so tradeoff is C vs A during partitions.</p>
+<h2>🧩 2. Simple Scenario: Double Withdrawals</h2>
+<ul>
+<li>
+<p>Balance = 1000, replicated at M1 and M2.</p>
+</li>
+<li>
+<p>Partition occurs → no sync.</p>
+</li>
+<li>
+<p>ATM hits M1 → withdraw 500 (balance 500).</p>
+</li>
+<li>
+<p>ATM hits M2 → withdraw 1000 (balance 0).</p>
+</li>
+<li>
+<p>Customer walks away with 1500 🥲.</p>
+</li>
+<li>
+<p>When partition heals → conflict must be resolved.</p>
+</li>
+<li>
+<p>AP (Availability + Partition tolerance) → both withdrawals succeed → double spend.</p>
+</li>
+<li>
+<p>CP (Consistency + Partition tolerance) → one withdrawal would have been blocked.</p>
+</li>
+</ul>
+<h2>🧩 3. Quorum &amp; Replicas</h2>
+<ul>
+<li>
+<p>To prevent both sides from “thinking they’re right,” quorum is used.</p>
+</li>
+<li>
+<p>Minimum 3 replicas needed → majority wins.</p>
+</li>
+<li>
+<p>With 2 replicas → both can believe they’re valid (split-brain).</p>
+</li>
+<li>
+<p>So banks &amp; serious CP systems always run with odd number of replicas and leader election.</p>
+</li>
+</ul>
+<h2>🧩 4. Banks in Real Life</h2>
+<ul>
+<li>
+<p>Banks run multi-DC (multi–data center) replication.</p>
+</li>
+<li>
+<p>Withdrawals = CP (must talk to global quorum).</p>
+</li>
+<li>
+<p>Balance inquiries = AP (can serve slightly stale reads).</p>
+</li>
+<li>
+<p>If one DC is cut off, ATMs connected to it → fail (“Service unavailable”).</p>
+</li>
+<li>
+<p>Other ATMs connected to healthy quorum → succeed.</p>
+</li>
+<li>
+<p>That’s why “ATM across the road works, but this one doesn’t.”</p>
+</li>
+</ul>
+<h2>🧩 5. Cross-Bank Transactions</h2>
+<ul>
+<li>
+<p>Flow = ATM (HDFC) → HDFC Switch → NPCI → Kotak (issuer).</p>
+</li>
+<li>
+<p>Issuer (Kotak) = final authority on approval.</p>
+</li>
+<li>
+<p>Acquirer (HDFC ATM) = just dispenser + logger.</p>
+</li>
+<li>
+<p>End of day → NPCI nets out balances → RBI settles between banks.</p>
+</li>
+</ul>
+<h2>🧩 6. Edge Cases</h2>
+<ul>
+<li>
+<p><strong>ATM low on cash:</strong></p>
+</li>
+<li>
+<p>Kotak may approve 10k, but HDFC ATM has only 4k.</p>
+</li>
+<li>
+<p>ATM either:</p>
+</li>
+<li>
+<p>Does partial dispense + informs Kotak (account debited 4k).</p>
+</li>
+<li>
+<p>Or cancels txn (no debit).</p>
+</li>
+<li>
+<p>If mismatch → corrected in reconciliation.</p>
+</li>
+<li>
+<p><strong>ATM crash before reconciliation:</strong></p>
+</li>
+<li>
+<p>Cash may/may not have been dispensed, but logs not sent.</p>
+</li>
+<li>
+<p>Mismatch detected during settlement window.</p>
+</li>
+<li>
+<p>Auto-reversal (T+1/T+2 days) ensures customer doesn’t lose money.</p>
+</li>
+<li>
+<p>If not → customer dispute → forced correction.</p>
+</li>
+</ul>
+<h2>✅ Summary in One Line</h2>
+<h5>From CAP theorem to banks: distributed systems must pick CP for money safety → which is why sometimes your ATM fails while another works → issuer always decides, acquirer just dispenses → low cash and crash scenarios get fixed later during reconciliation → but in the moment, you see all the weirdness.</h5>
+    <footer>
+      <p>Published: <time datetime="2025-09-14T00:00:00+05:30">
+        Sun 14 September 2025
+      </time></p>
+        <address>
+          By             <a href="https://priyanshubishnoi.github.io/tech-blog/author/priyanshu-bishnoi.html">Priyanshu Bishnoi</a>
+        </address>
+        <p>
+          Category: <a href="https://priyanshubishnoi.github.io/tech-blog/category/distributed-systems.html">Distributed Systems</a>
+        </p>
+        <p>
+          Tags:
+            <a href="https://priyanshubishnoi.github.io/tech-blog/tag/captheorem.html">CAPTheorem</a>
+            <a href="https://priyanshubishnoi.github.io/tech-blog/tag/atm.html">ATM</a>
+            <a href="https://priyanshubishnoi.github.io/tech-blog/tag/banking.html">Banking</a>
+        </p>
+    </footer>
+  </article>
+      </main>
+      <footer>
+          <address>
+            Proudly powered by <a rel="nofollow" href="https://getpelican.com/">Pelican</a>,
+            which takes great advantage of <a rel="nofollow" href="https://www.python.org/">Python</a>.
+          </address>
+      </footer>
+  </body>
+</html>
