@@ -1,12 +1,15 @@
 AUTHOR = 'Priyanshu Bishnoi'
-SITENAME = 'CAP Theorem Meets ATMs'
+SITENAME = 'BishnoiBytes'
 SITEURL = ""
+RELATIVE_URLS = True
 DIRECT_TEMPLATES = [
     'index',
     'tags',
     'categories',
     'authors',
+    'search',
     'archives',   # this enables dates archive
+    'analytics'
 ]
 
 PATH = "content"
@@ -38,9 +41,24 @@ SOCIAL = (
 THEME = "themes/papyrus"
 PLUGIN_PATHS = ['pelican-plugins']
 PLUGINS = ['pelican_ga4']
-
+SEARCH_MODE = "output"
+SEARCH_HTML_SELECTOR = "article"  
 GA4_MEASUREMENT_ID = "G-98GLR120T4"
 DEFAULT_PAGINATION = 10
 
 # Uncomment following line if you want document-relative URLs when developing
 # RELATIVE_URLS = True
+
+
+FEED_ALL_ATOM = FEED_ALL_RSS = CATEGORY_FEED_ATOM = TAG_FEED_ATOM = None
+TRANSLATION_FEED_ATOM = AUTHOR_FEED_ATOM = AUTHOR_FEED_RSS = None
+
+EXTRA_HEAD_DATA = """
+<!-- GA4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date()); gtag('config', 'G-XXXXXXXXXX');
+</script>
+"""

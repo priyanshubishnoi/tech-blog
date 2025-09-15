@@ -7,16 +7,32 @@ import sys
 sys.path.append(os.curdir)
 from pelicanconf import *
 
-# If your site is available via HTTPS, make sure SITEURL begins with https://
-SITEURL = ""
+SITEURL = "https://priyanshubishnoi.github.io/tech-blog"
 RELATIVE_URLS = False
 
-FEED_ALL_ATOM = "feeds/all.atom.xml"
-CATEGORY_FEED_ATOM = "feeds/{slug}.atom.xml"
+THEME = "themes/papyrus"
+THEME_STATIC_PATHS = ["static"]
+THEME_STATIC_DIR = "theme"
 
 DELETE_OUTPUT_DIRECTORY = True
 
-# Following items are often useful when publishing
+PLUGIN_PATHS = ['pelican-plugins']
+PLUGINS = ['pelican_ga4']  # keep others if you add them
 
-# DISQUS_SITENAME = ""
-# GOOGLE_ANALYTICS = ""
+FEED_ALL_ATOM = "feeds/all.atom.xml"
+CATEGORY_FEED_ATOM = "feeds/{slug}.atom.xml"
+GA4_MEASUREMENT_ID = "G-98GLR120T4"
+
+FEED_ALL_ATOM = FEED_ALL_RSS = CATEGORY_FEED_ATOM = TAG_FEED_ATOM = None
+TRANSLATION_FEED_ATOM = AUTHOR_FEED_ATOM = AUTHOR_FEED_RSS = None
+
+# pelicanconf.py / publishconf.py
+EXTRA_HEAD_DATA = """
+<!-- GA4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date()); gtag('config', 'G-XXXXXXXXXX');
+</script>
+"""
