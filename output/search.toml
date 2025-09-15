@@ -1,8 +1,0 @@
-[input]
-base_directory = "output"
-html_selector = "article"
-
-[[input.files]]
-path = "cap-atm.html"
-url = "/cap-atm.html"
-title = "CAP Theorem Meets ATMs"

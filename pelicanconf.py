@@ -38,7 +38,7 @@ SOCIAL = (
 )
 THEME = "themes/papyrus"
 PLUGIN_PATHS = ['pelican-plugins']
-PLUGINS = ['pelican_ga4',"search"]
+PLUGINS = ['pelican_ga4']
 SEARCH_MODE = "output"
 SEARCH_HTML_SELECTOR = "article"  
 GA4_MEASUREMENT_ID = "G-98GLR120T4"
