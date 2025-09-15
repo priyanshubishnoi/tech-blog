@@ -1,6 +1,6 @@
 AUTHOR = 'Priyanshu Bishnoi'
 SITENAME = 'CAP Theorem Meets ATMs'
-SITEURL = "https://priyanshubishnoi.github.io/tech-blog"
+SITEURL = ""
 RELATIVE_URLS = False
 DIRECT_TEMPLATES = [
     'index',
@@ -38,8 +38,9 @@ SOCIAL = (
 )
 THEME = "themes/papyrus"
 PLUGIN_PATHS = ['pelican-plugins']
-PLUGINS = ['pelican_ga4']
-
+PLUGINS = ['pelican_ga4',"search"]
+SEARCH_MODE = "output"
+SEARCH_HTML_SELECTOR = "article"  
 GA4_MEASUREMENT_ID = "G-98GLR120T4"
 DEFAULT_PAGINATION = 10
 
