@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="generator" content="Pelican" />
     <meta name="description" content="BishnoiBytes Blog Posts">
-    <title>CAP Theorem Meets ATMs</title>
+    <title>DLLs — The Hidden System Design Boundaries</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab|Ruda" />
     <link rel="stylesheet" type="text/css" href="https://priyanshubishnoi.github.io/tech-blog/theme/css/main.css" />
@@ -22,7 +22,7 @@
         gtag('js', new Date());
         gtag('config', 'G-98GLR120T4');
     </script>
-<meta name="description" content="How distributed systems and CAP theorem explain why some ATMs work while others fail." />
+<meta name="description" content="Exploring DLLs beyond dependencies — how they embody encapsulation, reusability, and modularity, making them the building blocks of maintainable monoliths." />
 </head>
 
 <body class="min-h-screen flex flex-col max-w-7xl lg:max-w-none text-zinc-800 bg-neutral-100 
@@ -87,7 +87,7 @@
                     </svg>
                 </li>
                 <li class="flex items-center">
-                    <a href="https://priyanshubishnoi.github.io/tech-blog/category/distributed-systems.html">Distributed Systems</a>
+                    <a href="https://priyanshubishnoi.github.io/tech-blog/category/system-design-principles.html">System Design Principles</a>
                     <svg class="fill-current w-3 h-3 mr-2 ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
                         <path
                             d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z" />
@@ -98,10 +98,10 @@
 
 <main>
   <header>
-    <h1 class="font-semibold text-3xl my-2">CAP Theorem Meets ATMs</h1>
+    <h1 class="font-semibold text-3xl my-2">DLLs — The Hidden System Design Boundaries</h1>
     <footer class="flex text-sm text-zinc-800 dark:text-zinc-400">
       <div class="flex text-xs text-zinc-800 dark:text-zinc-400">
-        <time>September 14, 2025</time>
+        <time>September 16, 2025</time>
         <div>
         </div>
         <div>
@@ -127,151 +127,94 @@
               prose-img:rounded-md
               sm:text-left md:text-justify
               ">
-    <h2>let’s stitch your whole thought process into one clean storyline — from CAP theorem all the way down to real-world ATMs.</h2>
-<h2>🧩 1. CAP Theorem Basics</h2>
+    <h2>Understanding DLLs Beyond the File Extension</h2>
+<p>Most developers encounter <strong>.dlls (Dynamic Link Libraries)</strong> as “dependencies” — files that contain compiled code their applications need.</p>
+<p>But from a <strong>system design perspective</strong>, a .dll is much more than just a technical necessity. It embodies key architectural principles that we also apply at higher levels, like in microservice design.</p>
+<h2>🧩 What is a DLL in Simple Terms?</h2>
+<p>A <strong>.dll is a compiled, reusable module</strong> that contains code and resources. Multiple applications can load and use it at runtime.</p>
 <ul>
 <li>
-<p>C (Consistency): everyone sees the same data.</p>
+<p>In <strong>.NET</strong>, a .dll is an assembly with IL (Intermediate Language) + metadata.</p>
 </li>
 <li>
-<p>A (Availability): system always responds.</p>
-</li>
-<li>
-<p>P (Partition tolerance): system survives network splits.</p>
+<p>In <strong>native systems</strong>, it’s a binary library with exported functions.</p>
 </li>
 </ul>
-<p>In real distributed systems → P is unavoidable, so tradeoff is C vs A during partitions.</p>
-<h2>🧩 2. Simple Scenario: Double Withdrawals</h2>
-<ul>
-<li>
-<p>Balance = 1000, replicated at M1 and M2.</p>
-</li>
-<li>
-<p>Partition occurs → no sync.</p>
-</li>
-<li>
-<p>ATM hits M1 → withdraw 500 (balance 500).</p>
-</li>
-<li>
-<p>ATM hits M2 → withdraw 1000 (balance 0).</p>
-</li>
-<li>
-<p>Customer walks away with 1500 🥲.</p>
-</li>
-<li>
-<p>When partition heals → conflict must be resolved.</p>
-</li>
-<li>
-<p>AP (Availability + Partition tolerance) → both withdrawals succeed → double spend.</p>
-</li>
-<li>
-<p>CP (Consistency + Partition tolerance) → one withdrawal would have been blocked.</p>
-</li>
-</ul>
-<h2>🧩 3. Quorum &amp; Replicas</h2>
-<ul>
-<li>
-<p>To prevent both sides from “thinking they’re right,” quorum is used.</p>
-</li>
-<li>
-<p>Minimum 3 replicas needed → majority wins.</p>
-</li>
-<li>
-<p>With 2 replicas → both can believe they’re valid (split-brain).</p>
-</li>
-<li>
-<p>So banks &amp; serious CP systems always run with odd number of replicas and leader election.</p>
-</li>
-</ul>
-<h2>🧩 4. Banks in Real Life</h2>
-<ul>
-<li>
-<p>Banks run multi-DC (multi–data center) replication.</p>
-</li>
-<li>
-<p>Withdrawals = CP (must talk to global quorum).</p>
-</li>
-<li>
-<p>Balance inquiries = AP (can serve slightly stale reads).</p>
-</li>
-<li>
-<p>If one DC is cut off, ATMs connected to it → fail (“Service unavailable”).</p>
-</li>
-<li>
-<p>Other ATMs connected to healthy quorum → succeed.</p>
-</li>
-<li>
-<p>That’s why “ATM across the road works, but this one doesn’t.”</p>
-</li>
-</ul>
-<h2>🧩 5. Cross-Bank Transactions</h2>
-<ul>
-<li>
-<p>Flow = ATM (HDFC) → HDFC Switch → NPCI → Kotak (issuer).</p>
-</li>
-<li>
-<p>Issuer (Kotak) = final authority on approval.</p>
-</li>
-<li>
-<p>Acquirer (HDFC ATM) = just dispenser + logger.</p>
-</li>
-<li>
-<p>End of day → NPCI nets out balances → RBI settles between banks.</p>
-</li>
-</ul>
-<h2>🧩 6. Edge Cases</h2>
-<ul>
-<li>
-<p><strong>ATM low on cash:</strong></p>
-</li>
-<li>
-<p>Kotak may approve 10k, but HDFC ATM has only 4k.</p>
-</li>
-<li>
-<p>ATM either:</p>
-</li>
-<li>
-<p>Does partial dispense + informs Kotak (account debited 4k).</p>
-</li>
-<li>
-<p>Or cancels txn (no debit).</p>
-</li>
-<li>
-<p>If mismatch → corrected in reconciliation.</p>
-</li>
-<li>
-<p><strong>ATM crash before reconciliation:</strong></p>
-</li>
-<li>
-<p>Cash may/may not have been dispensed, but logs not sent.</p>
-</li>
-<li>
-<p>Mismatch detected during settlement window.</p>
-</li>
-<li>
-<p>Auto-reversal (T+1/T+2 days) ensures customer doesn’t lose money.</p>
-</li>
-<li>
-<p>If not → customer dispute → forced correction.</p>
-</li>
-</ul>
-<h2>✅ Summary in One Line</h2>
-<h5>From CAP theorem to banks: distributed systems must pick CP for money safety → which is why sometimes your ATM fails while another works → issuer always decides, acquirer just dispenses → low cash and crash scenarios get fixed later during reconciliation → but in the moment, you see all the weirdness.</h5>
+<h2>🧩 Why DLLs Matter in System Design</h2>
+<h3>🔹 Encapsulation &amp; Abstraction</h3>
+<p>DLLs expose a public API while hiding their internal implementation. This enforces boundaries, similar to how 
+microservices expose endpoints but hide their internals.</p>
+<h3>🔹 Reusability</h3>
+<p>A DLL can serve multiple applications, just like a shared service.
+E.g., a <code>Payments.dll</code> can be reused by multiple internal tools instead of duplicating code.</p>
+<h3>🔹 Maintainability</h3>
+<p>DLLs can be <strong>updated independently</strong>, without rebuilding the entire system. This is parallel to independently deployable microservices.</p>
+<h3>🔹 Separation of Concerns</h3>
+<p>Different DLLs handle different , aligning with system design principles like <strong>single responsibility and loose 
+coupling</strong>. Example: <code>Auth.dll</code>, <code>DataAccess.dll</code>, <code>Logging.dll</code>.</p>
+<h2>🧩 DLL vs Microservice (System Design Analogy)</h2>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>DLL (Inside Monolith)</th>
+<th>Microservice (Distributed System)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Boundary</td>
+<td>Assembly boundary</td>
+<td>Service boundary</td>
+</tr>
+<tr>
+<td>Interface</td>
+<td>Public classes/methods</td>
+<td>REST/gRPC APIs</td>
+</tr>
+<tr>
+<td>Communication</td>
+<td>In-process (fast)</td>
+<td>Network calls (slower)</td>
+</tr>
+<tr>
+<td>Deployment</td>
+<td>Deployed with the application</td>
+<td>Independent deployment</td>
+</tr>
+<tr>
+<td>Failure Scope</td>
+<td>App may crash if DLL fails</td>
+<td>Isolated failures</td>
+</tr>
+<tr>
+<td>Update Model</td>
+<td>Versioning managed at build/deploy</td>
+<td>Independent CI/CD pipeline</td>
+</tr>
+</tbody>
+</table>
+<h2>🧩 The Big Picture</h2>
+<p>When you use DLLs, you’re not just organizing code — you’re <strong>designing systems with modularity in mind</strong>. DLLs are 
+the <strong>building blocks of maintainable monoliths</strong>, the same way microservices are the building blocks of scalable distributed systems.</p>
+<h2>✅ Takeaway:</h2>
+<p>Next time you see a <code>.dll</code> in your project, don’t just think “dependency.”
+Think: <strong>“This is a design boundary — a self-contained service inside my system.”</strong></p>
     <!-- <div class="aspect-w-16 aspect-h-9 mx-auto"></div> CSS placeholder -->
   </div>
   <footer class="flex flex-col mt-10 ">
     <ul class="flex flex-wrap">
         <li
           class="bg-zinc-200 hover:bg-zinc-300 dark:hover:bg-zinc-800 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 mb-2 mr-2 px-3 py-1.5 rounded-md transition ease-in active:-translate-y-1 active:scale-110 duration-75">
-          <a href="https://priyanshubishnoi.github.io/tech-blog/tag/atm.html">ATM</a>
+          <a href="https://priyanshubishnoi.github.io/tech-blog/tag/dll.html">DLL</a>
         </li>
         <li
           class="bg-zinc-200 hover:bg-zinc-300 dark:hover:bg-zinc-800 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 mb-2 mr-2 px-3 py-1.5 rounded-md transition ease-in active:-translate-y-1 active:scale-110 duration-75">
-          <a href="https://priyanshubishnoi.github.io/tech-blog/tag/banking.html">Banking</a>
+          <a href="https://priyanshubishnoi.github.io/tech-blog/tag/modular-monolith.html">Modular Monolith</a>
         </li>
         <li
           class="bg-zinc-200 hover:bg-zinc-300 dark:hover:bg-zinc-800 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 mb-2 mr-2 px-3 py-1.5 rounded-md transition ease-in active:-translate-y-1 active:scale-110 duration-75">
-          <a href="https://priyanshubishnoi.github.io/tech-blog/tag/cap-theorem.html">CAP Theorem</a>
+          <a href="https://priyanshubishnoi.github.io/tech-blog/tag/software-architecture.html">Software Architecture</a>
         </li>
         <li
           class="bg-zinc-200 hover:bg-zinc-300 dark:hover:bg-zinc-800 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 mb-2 mr-2 px-3 py-1.5 rounded-md transition ease-in active:-translate-y-1 active:scale-110 duration-75">

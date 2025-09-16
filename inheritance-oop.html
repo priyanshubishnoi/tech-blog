@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="generator" content="Pelican" />
     <meta name="description" content="BishnoiBytes Blog Posts">
-    <title>CAP Theorem Meets ATMs</title>
+    <title>Inheritance in Object-Oriented Programming</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab|Ruda" />
     <link rel="stylesheet" type="text/css" href="https://priyanshubishnoi.github.io/tech-blog/theme/css/main.css" />
@@ -22,7 +22,7 @@
         gtag('js', new Date());
         gtag('config', 'G-98GLR120T4');
     </script>
-<meta name="description" content="How distributed systems and CAP theorem explain why some ATMs work while others fail." />
+<meta name="description" content="A deep dive into inheritance in object-oriented programming, explained with real-world analogies, C# examples, and architectural insights." />
 </head>
 
 <body class="min-h-screen flex flex-col max-w-7xl lg:max-w-none text-zinc-800 bg-neutral-100 
@@ -87,7 +87,7 @@
                     </svg>
                 </li>
                 <li class="flex items-center">
-                    <a href="https://priyanshubishnoi.github.io/tech-blog/category/distributed-systems.html">Distributed Systems</a>
+                    <a href="https://priyanshubishnoi.github.io/tech-blog/category/object-oriented-programming.html">Object-Oriented Programming</a>
                     <svg class="fill-current w-3 h-3 mr-2 ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
                         <path
                             d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z" />
@@ -98,10 +98,10 @@
 
 <main>
   <header>
-    <h1 class="font-semibold text-3xl my-2">CAP Theorem Meets ATMs</h1>
+    <h1 class="font-semibold text-3xl my-2">Inheritance in Object-Oriented Programming</h1>
     <footer class="flex text-sm text-zinc-800 dark:text-zinc-400">
       <div class="flex text-xs text-zinc-800 dark:text-zinc-400">
-        <time>September 14, 2025</time>
+        <time>September 16, 2025</time>
         <div>
         </div>
         <div>
@@ -127,151 +127,144 @@
               prose-img:rounded-md
               sm:text-left md:text-justify
               ">
-    <h2>let’s stitch your whole thought process into one clean storyline — from CAP theorem all the way down to real-world ATMs.</h2>
-<h2>🧩 1. CAP Theorem Basics</h2>
+    <h2>Understanding Inheritance in Object-Oriented Programming</h2>
+<p>We’ve all heard the word <strong>inheritance</strong> in daily life. For example, we inherit traits from our parents — eye color, height, or even habits. </p>
+<p>Similarly, in programming, inheritance allows a class (child/derived) to <strong>inherit properties and behaviors</strong> from another class (parent/base). These features may include methods, properties, and fields.</p>
+<p>But what does that really mean at a deeper level? Let’s explore step by step.</p>
+<h2>🧩 1. What is Inheritance (Layman’s View)?</h2>
+<p>Inheritance simply means getting something from someone you’re related to.</p>
+<p>In OOP: A class can “get” methods, properties, and fields from another class.</p>
+<p>Example:</p>
+<p><code>Engineer</code> (base class, general)</p>
+<p><code>CivilEngineer</code>, <code>MechanicalEngineer</code>, <code>SoftwareEngineer</code> (derived classes, specialized)</p>
+<p>Here, “Engineer” is the <strong>general category</strong>, and the specialized ones are inheritors.</p>
+<p>👉 This is called the <strong>generalization principle</strong>:</p>
+<ul>
+<li>Base classes = generalized</li>
+<li>Derived classes = specialized</li>
+</ul>
+<h2>🧩 2. The “Is-A” Relationship</h2>
+<p>Inheritance is <strong>valid</strong> only when there is a <strong>logical relationship</strong>.</p>
+<ul>
+<li>✅ “<code>Car</code> is a <code>Vehicle</code>” → makes sense → Car inherits Vehicle.</li>
+<li>✅ “A <code>Dog</code> is an <code>Animal</code>”</li>
+<li>❌ “<code>Car</code> is a <code>Driver</code>” → illogical → should not be inheritance.</li>
+</ul>
+<p>This is why OOP stresses:</p>
+<p>👉 Use inheritance only when <strong>Derived class <em>is a type of</em> Base class</strong>.</p>
+<h2>🧩 3. One-to-Many Inheritance</h2>
+<p>In most mainstream languages (like C#, Java):</p>
 <ul>
 <li>
-<p>C (Consistency): everyone sees the same data.</p>
+<p>One <strong>base class</strong> can have <strong>multiple derived classes</strong>.</p>
 </li>
 <li>
-<p>A (Availability): system always responds.</p>
+<p>But one <strong>derived class</strong> can usually only inherit from <strong>a single base class</strong> </p>
 </li>
-<li>
-<p>P (Partition tolerance): system survives network splits.</p>
-</li>
+<li>C# doesn’t support multiple inheritance of classes (only via interfaces).</li>
 </ul>
-<p>In real distributed systems → P is unavoidable, so tradeoff is C vs A during partitions.</p>
-<h2>🧩 2. Simple Scenario: Double Withdrawals</h2>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Vehicle</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Car</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">Vehicle</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span><span class="w">  </span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Bike</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">Vehicle</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span><span class="w"> </span>
+</code></pre></div>
+
+<p>Here, <code>Car</code> and <code>Bike</code> both inherit from <code>Vehicle</code>.</p>
+<h2>🧩 4. How Does It Work Internally?</h2>
+<p>Now, here’s the interesting part.
+When you create an <strong>object of the derived class</strong>, two things happen internally:</p>
+<ul>
+<li>The <strong>base class constructor</strong> is called <strong>first</strong>.</li>
+<li>Then, the <strong>derived class constructor</strong> is executed.</li>
+</ul>
+<p>So in memory, the object of the <strong>derived class contains an implicit base part</strong> inside it.</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Base</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="nf">Base</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;Base constructor&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">BaseMethod</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;Base method&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Derived</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">Base</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="nf">Derived</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;Derived constructor&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">DerivedMethod</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;Derived method&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Program</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">Main</span><span class="p">()</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">Derived</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Derived</span><span class="p">();</span>
+<span class="w">        </span><span class="n">d</span><span class="p">.</span><span class="n">BaseMethod</span><span class="p">();</span><span class="w">   </span><span class="c1">// Works! Even though we never created a Base object</span>
+<span class="w">        </span><span class="n">d</span><span class="p">.</span><span class="n">DerivedMethod</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Output:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">Base</span><span class="w"> </span><span class="n">constructor</span>
+<span class="n">Derived</span><span class="w"> </span><span class="n">constructor</span>
+<span class="n">Base</span><span class="w"> </span><span class="n">method</span>
+<span class="n">Derived</span><span class="w"> </span><span class="n">method</span>
+</code></pre></div>
+
+<p>Here, even though we only created an object of <strong>Derived</strong>, the <strong>Base constructor</strong> ran first. That’s why we can call <strong>BaseMethod()</strong> from the derived object—it already has the base part inside it.</p>
+<p>You don’t explicitly create a base object—C# handles it internally.</p>
+<p>Covariance in inheritance: </p>
+<ul>
+<li>C# also allows treating a more derived type as its base type.</li>
+</ul>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><span class="n">Base</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Derived</span><span class="p">();</span><span class="w"> </span><span class="c1">// Valid due to covariance</span>
+</code></pre></div>
+
+<p>This shows that a derived object can always be referred to as its base type.</p>
+<p>This is fundamental in polymorphism and is what allows derived classes to be passed where base classes are expected (e.g., in method parameters).</p>
+<h2>🧩 5. The Real Value of Inheritance</h2>
+<p>Yes, code can be reused without inheritance (through composition, libraries, or utility classes). Inheritance Offers deeper architectural benefits:</p>
 <ul>
 <li>
-<p>Balance = 1000, replicated at M1 and M2.</p>
+<p><strong>Abstraction</strong> of common logic across related classes.</p>
 </li>
 <li>
-<p>Partition occurs → no sync.</p>
+<p><strong>Polymorphism</strong> that allows flexible, extensible design.</p>
 </li>
 <li>
-<p>ATM hits M1 → withdraw 500 (balance 500).</p>
-</li>
-<li>
-<p>ATM hits M2 → withdraw 1000 (balance 0).</p>
-</li>
-<li>
-<p>Customer walks away with 1500 🥲.</p>
-</li>
-<li>
-<p>When partition heals → conflict must be resolved.</p>
-</li>
-<li>
-<p>AP (Availability + Partition tolerance) → both withdrawals succeed → double spend.</p>
-</li>
-<li>
-<p>CP (Consistency + Partition tolerance) → one withdrawal would have been blocked.</p>
+<p><strong>Hierarchical architecture</strong>, where specialized entities extend generalized ones.</p>
 </li>
 </ul>
-<h2>🧩 3. Quorum &amp; Replicas</h2>
+<h2>✅ 6. Final Takeaway</h2>
+<p>So, in essence:</p>
 <ul>
 <li>
-<p>To prevent both sides from “thinking they’re right,” quorum is used.</p>
+<p>The <strong>derived class encapsulates</strong> the base class.</p>
 </li>
 <li>
-<p>Minimum 3 replicas needed → majority wins.</p>
+<p>The base part of the object is always created first even before the derived.</p>
 </li>
 <li>
-<p>With 2 replicas → both can believe they’re valid (split-brain).</p>
+<p>Inheritance enables access to base methods, properties, and fields.</p>
 </li>
 <li>
-<p>So banks &amp; serious CP systems always run with odd number of replicas and leader election.</p>
+<p>With <strong>covariance</strong>, we can treat derived classes as base types, <strong>unlocking polymorphism</strong>.</p>
 </li>
 </ul>
-<h2>🧩 4. Banks in Real Life</h2>
-<ul>
-<li>
-<p>Banks run multi-DC (multi–data center) replication.</p>
-</li>
-<li>
-<p>Withdrawals = CP (must talk to global quorum).</p>
-</li>
-<li>
-<p>Balance inquiries = AP (can serve slightly stale reads).</p>
-</li>
-<li>
-<p>If one DC is cut off, ATMs connected to it → fail (“Service unavailable”).</p>
-</li>
-<li>
-<p>Other ATMs connected to healthy quorum → succeed.</p>
-</li>
-<li>
-<p>That’s why “ATM across the road works, but this one doesn’t.”</p>
-</li>
-</ul>
-<h2>🧩 5. Cross-Bank Transactions</h2>
-<ul>
-<li>
-<p>Flow = ATM (HDFC) → HDFC Switch → NPCI → Kotak (issuer).</p>
-</li>
-<li>
-<p>Issuer (Kotak) = final authority on approval.</p>
-</li>
-<li>
-<p>Acquirer (HDFC ATM) = just dispenser + logger.</p>
-</li>
-<li>
-<p>End of day → NPCI nets out balances → RBI settles between banks.</p>
-</li>
-</ul>
-<h2>🧩 6. Edge Cases</h2>
-<ul>
-<li>
-<p><strong>ATM low on cash:</strong></p>
-</li>
-<li>
-<p>Kotak may approve 10k, but HDFC ATM has only 4k.</p>
-</li>
-<li>
-<p>ATM either:</p>
-</li>
-<li>
-<p>Does partial dispense + informs Kotak (account debited 4k).</p>
-</li>
-<li>
-<p>Or cancels txn (no debit).</p>
-</li>
-<li>
-<p>If mismatch → corrected in reconciliation.</p>
-</li>
-<li>
-<p><strong>ATM crash before reconciliation:</strong></p>
-</li>
-<li>
-<p>Cash may/may not have been dispensed, but logs not sent.</p>
-</li>
-<li>
-<p>Mismatch detected during settlement window.</p>
-</li>
-<li>
-<p>Auto-reversal (T+1/T+2 days) ensures customer doesn’t lose money.</p>
-</li>
-<li>
-<p>If not → customer dispute → forced correction.</p>
-</li>
-</ul>
-<h2>✅ Summary in One Line</h2>
-<h5>From CAP theorem to banks: distributed systems must pick CP for money safety → which is why sometimes your ATM fails while another works → issuer always decides, acquirer just dispenses → low cash and crash scenarios get fixed later during reconciliation → but in the moment, you see all the weirdness.</h5>
+<p>Inheritance is not just about <strong>sharing code</strong> — it’s about building a <strong>logical, extensible architecture.</strong></p>
     <!-- <div class="aspect-w-16 aspect-h-9 mx-auto"></div> CSS placeholder -->
   </div>
   <footer class="flex flex-col mt-10 ">
     <ul class="flex flex-wrap">
         <li
           class="bg-zinc-200 hover:bg-zinc-300 dark:hover:bg-zinc-800 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 mb-2 mr-2 px-3 py-1.5 rounded-md transition ease-in active:-translate-y-1 active:scale-110 duration-75">
-          <a href="https://priyanshubishnoi.github.io/tech-blog/tag/atm.html">ATM</a>
+          <a href="https://priyanshubishnoi.github.io/tech-blog/tag/c.html">C#</a>
         </li>
         <li
           class="bg-zinc-200 hover:bg-zinc-300 dark:hover:bg-zinc-800 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 mb-2 mr-2 px-3 py-1.5 rounded-md transition ease-in active:-translate-y-1 active:scale-110 duration-75">
-          <a href="https://priyanshubishnoi.github.io/tech-blog/tag/banking.html">Banking</a>
+          <a href="https://priyanshubishnoi.github.io/tech-blog/tag/inheritance.html">Inheritance</a>
         </li>
         <li
           class="bg-zinc-200 hover:bg-zinc-300 dark:hover:bg-zinc-800 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 mb-2 mr-2 px-3 py-1.5 rounded-md transition ease-in active:-translate-y-1 active:scale-110 duration-75">
-          <a href="https://priyanshubishnoi.github.io/tech-blog/tag/cap-theorem.html">CAP Theorem</a>
+          <a href="https://priyanshubishnoi.github.io/tech-blog/tag/oop.html">OOP</a>
         </li>
         <li
           class="bg-zinc-200 hover:bg-zinc-300 dark:hover:bg-zinc-800 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 mb-2 mr-2 px-3 py-1.5 rounded-md transition ease-in active:-translate-y-1 active:scale-110 duration-75">
