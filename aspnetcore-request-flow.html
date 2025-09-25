@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="english">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content="Pelican" />
+    <meta name="description" content="BishnoiBytes Blog Posts">
+    <title>How ASP.NET Core Actually Handles Your Requests (A System-Design Lens)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab|Ruda" />
+    <link rel="stylesheet" type="text/css" href="https://priyanshubishnoi.github.io/tech-blog/theme/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://priyanshubishnoi.github.io/tech-blog/theme/css/pygment.css" />
+    <link rel="shortcut icon" href="https://priyanshubishnoi.github.io/tech-blog/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://priyanshubishnoi.github.io/tech-blog/theme/css/stork.css">
+    <link rel="stylesheet" media="screen and (prefers-color-scheme: dark)"
+        href="https://priyanshubishnoi.github.io/tech-blog/theme/css/stork-dark.css">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-98GLR120T4"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-98GLR120T4');
+    </script>
+<meta name="description" content="A system-design breakdown of how ASP.NET Core processes requests — from edge servers through Kestrel, middleware, routing, controllers, and into..." />
+</head>
+
+<body class="min-h-screen flex flex-col max-w-7xl lg:max-w-none text-zinc-800 bg-neutral-100 
+    dark:bg-neutral-900 dark:text-zinc-300 container mx-auto justify-center md:px-3 ">
+    <script>
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia(
+                '(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
+    </script>
+    <nav class="sm:flex sm:justify-between xl:ml-32 pl-4 items-center">
+        <div class="flex pt-4">
+            <h1 class="font-semibold text-2xl"><a href="https://priyanshubishnoi.github.io/tech-blog/">BishnoiBytes</a></h1>
+            <button id="theme-toggle" type="button" aria-label="Light|Dark"
+                class="text-zinc-700 dark:text-zinc-400 rounded-full focus:outline-none text-sm ml-2 p-1">
+                <svg id="theme-toggle-dark-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                </svg>
+                <svg id="theme-toggle-light-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+                        fill-rule="evenodd" clip-rule="evenodd"></path>
+                </svg>
+            </button>
+        </div>
+        <ul class="flex flex-wrap lg:mr-24 md:pt-0">
+            <li class="mr-4 pt-6"><a  href="https://priyanshubishnoi.github.io/tech-blog/archives.html">Archive</a></li>
+            <li class="mr-4 pt-6"><a                     href="https://priyanshubishnoi.github.io/tech-blog/categories.html">Categories</a></li>
+            <li class="mr-4 pt-6"><a  href="https://priyanshubishnoi.github.io/tech-blog/tags.html">Tags</a></li>
+            <li class="mr-4 pt-6"><a  href="https://priyanshubishnoi.github.io/tech-blog/search.html">Search</a></li>
+        </ul>
+    </nav>
+    <div class="flex-grow md:max-w-screen-md md:mx-auto md:w-3/4 px-4">
+        <nav class="text-zinc-800 dark:text-zinc-300 mt-12 pb-2 md:mt-16" aria-label="Breadcrumb">
+            <ul class="p-0 inline-flex items-center">
+                <li class="flex items-center">
+                    <a href="https://priyanshubishnoi.github.io/tech-blog/" class="text-zinc-800 dark:text-zinc-300 inline-flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
+                            </path>
+                        </svg>
+                        Home
+                    </a>
+                    <svg class="fill-current w-3 h-3 mr-2 ml-1" xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 320 512">
+                        <path
+                            d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z" />
+                    </svg>
+                </li>
+                <li class="flex items-center">
+                    <a href="https://priyanshubishnoi.github.io/tech-blog/categories.html">Categories</a>
+                    <svg class="fill-current w-3 h-3 mr-2 ml-1" xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 320 512">
+                        <path
+                            d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z" />
+                    </svg>
+                </li>
+                <li class="flex items-center">
+                    <a href="https://priyanshubishnoi.github.io/tech-blog/category/system-design-principles.html">System Design Principles</a>
+                    <svg class="fill-current w-3 h-3 mr-2 ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+                        <path
+                            d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z" />
+                    </svg>
+                </li>
+            </ul>
+        </nav>
+
+<main>
+  <header>
+    <h1 class="font-semibold text-3xl my-2">How ASP.NET Core Actually Handles Your Requests (A System-Design Lens)</h1>
+    <footer class="flex text-sm text-zinc-800 dark:text-zinc-400">
+      <div class="flex text-xs text-zinc-800 dark:text-zinc-400">
+        <time>September 25, 2025</time>
+        <div>
+        </div>
+        <div>
+          <span>&nbsp;·&nbsp;Priyanshu Bishnoi</span>
+        </div>
+      </div>
+    </footer>
+  </header>
+  <div class="max-w-7xl container mx-auto my-8 text-zinc-800 dark:text-zinc-300  
+              prose lg:max-w-none prose-headings:text-zinc-800 prose-headings:dark:text-zinc-300 
+              prose-h1:text-3xl lg:prose-h1:text-3xl prose-headings:font-semibold 
+              prose-pre:bg-zinc-200 prose-pre:text-zinc-800
+              dark:prose-pre:bg-zinc-800 dark:prose-pre:text-zinc-200
+              prose-blockquote:text-zinc-800
+              dark:prose-blockquote:text-zinc-200
+              prose-a:text-slate-600 prose-a:font-normal
+              dark:prose-a:text-slate-400
+              dark:prose-strong:text-zinc-200 
+              dark:prose-code:text-zinc-200
+              dark:prose-code:bg-zinc-800
+              prose-code:bg-zinc-200
+              prose-code:font-light
+              prose-img:rounded-md
+              sm:text-left md:text-justify
+              ">
+    <h2>How ASP.NET Core Actually Handles Your Requests (A System-Design Lens)</h2>
+<p>We often treat ASP.NET Core as a black box — “request in, JSON out.” But when you zoom out with a system-design lens, the flow becomes clear. Understanding this flow is how you avoid duct-tape fixes, scale cleanly, and sleep at night when your APIs hit production traffic.</p>
+<h2>🧩 The Request Journey</h2>
+<p>Here’s the high-level path every request takes in a modern ASP.NET Core app:</p>
+<p><strong>Client → Edge (IIS / Nginx) → Server (Kestrel / IIS in-proc) → Middleware (policy) → Endpoint Routing → Controller/Minimal API → Use-case services → Repos/Adapters → DB/Queues/APIs</strong></p>
+<p>Let’s break it down.</p>
+<h2>1. Client → Edge</h2>
+<p>Requests start at the client (browser, mobile app, other service). They hit an edge gateway — Nginx, IIS, or a cloud load balancer.</p>
+<p>Why: TLS termination, static content caching, request buffering.</p>
+<p>Pitfall: skipping the edge and overloading your app server with “network plumbing” work.</p>
+<h2>2. Server (Kestrel or IIS in-proc)</h2>
+<p>The ASP.NET Core runtime runs on Kestrel, a high-performance cross-platform web server.</p>
+<p>If you’re on Windows + IIS, you might be running in-process.</p>
+<p>If Linux/containers, it’s usually Kestrel behind Nginx/ALB.</p>
+<p>Trade-off: IIS gives you Windows integration; Kestrel is leaner and cloud-native.</p>
+<h2>3. Middleware Pipeline</h2>
+<p>This is the policy layer. Every request passes through middleware in the order you define in <code>Program.cs</code>.</p>
+<p>Order is a contract:</p>
+<p>Errors → Security headers → Routing → AuthN/AuthZ → Rate limiting → Endpoints.</p>
+<p>Pitfall: putting things in the wrong order leads to silent bugs (e.g., logging after exception handling).</p>
+<h2>4. Endpoint Routing</h2>
+<p>ASP.NET Core matches the request to an endpoint (controller action, minimal API).</p>
+<p>Benefit: Unified routing across different styles (MVC, Razor Pages,).</p>
+<p>Pitfall: “attribute soup” routing that becomes unmaintainable.</p>
+<h2>5. Controllers or Minimal APIs</h2>
+<p>Controllers/Minimal APIs should be thin.</p>
+<p>Job: translate HTTP → use-case commands.</p>
+<p>Anti-pattern: dumping business logic into controllers.</p>
+<h2>6. Use-case Services</h2>
+<p>The core of your app. Business logic should live in <strong>application services</strong> or <strong>domain services</strong>.</p>
+<p>They don’t know about HTTP, databases, or infra.</p>
+<p>They depend on interfaces, not implementations.</p>
+<p>This is DIP (Dependency Inversion Principle) in practice.</p>
+<h2>7. Repos &amp; Adapters</h2>
+<p>Infrastructure concerns — databases, queues, external APIs — live here.</p>
+<p>Repositories, clients, adapters implement the interfaces defined by the core.</p>
+<p>Benefit: Swap SQL for Cosmos, or RabbitMQ for Kafka, without rewriting business logic.</p>
+<h2>8. Data Stores &amp; External Systems</h2>
+<p>Finally, your request may touch:</p>
+<p>SQL/NoSQL databases</p>
+<p>Message queues</p>
+<p>External APIs</p>
+<p>Caches</p>
+<h2>🧩 Key Guardrails for Scalable ASP.NET Core</h2>
+<h2>1. DIP, Not Duct Tape</h2>
+<p>Core depends on <strong>interfaces</strong>, infra implements <strong>adapters</strong>. That separation is what makes your app replaceable and testable.</p>
+<h2>2. DI/IoC at the Composition Root</h2>
+<p>ASP.NET Core gives you <strong>DI out of the box</strong>. Wire dependencies in <strong>Program.cs</strong> or <strong>Startup.cs</strong> once. Don’t new-up things in controllers.</p>
+<h2>3. Middleware Order Is Everything</h2>
+<p>Think of it as an <strong>assembly line</strong>. Break the contract, and things go wrong silently.</p>
+<h2>4. Stateless + Scale-out</h2>
+<p>Don’t hoard state in memory. Push it to Redis or a distributed cache. That’s how you scale horizontally.</p>
+<h2>5. Observability First</h2>
+<p>Before you ship:</p>
+<h3>🔹Structured logging (Serilog, etc.)</h3>
+<p>Instead of dumping random text like:</p>
+<p><code>User login failed because something something...</code></p>
+<p>Use structured logs:(Key:Value pairs)</p>
+<div class="highlight"><pre><span></span><code>{ &quot;event&quot;: &quot;UserLoginFailed&quot;,
+&quot;userId&quot;: 123,
+&quot;reason&quot;: &quot;InvalidPassword&quot;,
+&quot;timestamp&quot;: &quot;2025-09-15T21:00:00Z&quot; }
+</code></pre></div>
+
+<h3>🔹Distributed tracing (OpenTelemetry)</h3>
+<p>Problem: In microservices, one request may hop across 5–10 services. Which one slowed down? Which one broke?</p>
+<p>Solution: Tracing adds a unique trace ID that follows the request through the chain.</p>
+<p>You can then visualize:</p>
+<p><code>Client → API Gateway → Auth Service → Orders Service → DB</code></p>
+<p>See where time was spent, where errors happened.</p>
+<h3>🔹SLOs (Service Level Objectives) (latency, error budgets).</h3>
+<p>SLO = Target for system reliability/latency.</p>
+<p>Example:</p>
+<ul>
+<li>
+<p>99.9% of requests under 200ms.</p>
+</li>
+<li>
+<p>99.95% uptime over 30 days.</p>
+</li>
+</ul>
+<p>Error Budget = Allowed failure within that SLO.</p>
+<ul>
+<li>
+<p>If SLO = 99.9% uptime → you’re allowed 0.1% downtime (≈43 mins/month).</p>
+</li>
+<li>
+<p>That’s your “budget” to deploy risky changes, run experiments, etc.</p>
+</li>
+<li>
+<p>If you burn through it (too many outages) → freeze new features, focus only on reliability.</p>
+</li>
+</ul>
+<h3>Otherwise, you’re flying blind.</h3>
+<h2>Why This Matters</h2>
+<p>ASP.NET Core isn’t just a framework — it’s a <strong>system design in miniature</strong>.</p>
+<ul>
+<li>
+<p>Clean boundaries → faster refactors.</p>
+</li>
+<li>
+<p>Replaceable details → easier cloud migrations.</p>
+</li>
+<li>
+<p>Measurable runtime → fewer production regrets.</p>
+</li>
+</ul>
+<p>If you treat it as a box of magic, you’ll duct tape your way into tech debt. If you treat it as a layered system, you’ll build APIs that scale with your team and your traffic.</p>
+<h2>✅ Takeaway:</h2>
+<p>Think system design, not framework tricks. Keep boundaries clean, use DI, design for stateless scale-out, and measure everything. That’s how you keep velocity without regret.</p>
+    <!-- <div class="aspect-w-16 aspect-h-9 mx-auto"></div> CSS placeholder -->
+  </div>
+  <footer class="flex flex-col mt-10 ">
+    <ul class="flex flex-wrap">
+        <li
+          class="bg-zinc-200 hover:bg-zinc-300 dark:hover:bg-zinc-800 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 mb-2 mr-2 px-3 py-1.5 rounded-md transition ease-in active:-translate-y-1 active:scale-110 duration-75">
+          <a href="https://priyanshubishnoi.github.io/tech-blog/tag/aspnet-core.html">ASP.NET Core</a>
+        </li>
+        <li
+          class="bg-zinc-200 hover:bg-zinc-300 dark:hover:bg-zinc-800 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 mb-2 mr-2 px-3 py-1.5 rounded-md transition ease-in active:-translate-y-1 active:scale-110 duration-75">
+          <a href="https://priyanshubishnoi.github.io/tech-blog/tag/clean-architecture.html">Clean Architecture</a>
+        </li>
+        <li
+          class="bg-zinc-200 hover:bg-zinc-300 dark:hover:bg-zinc-800 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 mb-2 mr-2 px-3 py-1.5 rounded-md transition ease-in active:-translate-y-1 active:scale-110 duration-75">
+          <a href="https://priyanshubishnoi.github.io/tech-blog/tag/devops.html">DevOps</a>
+        </li>
+        <li
+          class="bg-zinc-200 hover:bg-zinc-300 dark:hover:bg-zinc-800 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 mb-2 mr-2 px-3 py-1.5 rounded-md transition ease-in active:-translate-y-1 active:scale-110 duration-75">
+          <a href="https://priyanshubishnoi.github.io/tech-blog/tag/hexagonal.html">Hexagonal</a>
+        </li>
+        <li
+          class="bg-zinc-200 hover:bg-zinc-300 dark:hover:bg-zinc-800 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 mb-2 mr-2 px-3 py-1.5 rounded-md transition ease-in active:-translate-y-1 active:scale-110 duration-75">
+          <a href="https://priyanshubishnoi.github.io/tech-blog/tag/middleware.html">Middleware</a>
+        </li>
+        <li
+          class="bg-zinc-200 hover:bg-zinc-300 dark:hover:bg-zinc-800 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 mb-2 mr-2 px-3 py-1.5 rounded-md transition ease-in active:-translate-y-1 active:scale-110 duration-75">
+          <a href="https://priyanshubishnoi.github.io/tech-blog/tag/software-architecture.html">Software Architecture</a>
+        </li>
+        <li
+          class="bg-zinc-200 hover:bg-zinc-300 dark:hover:bg-zinc-800 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 mb-2 mr-2 px-3 py-1.5 rounded-md transition ease-in active:-translate-y-1 active:scale-110 duration-75">
+          <a href="https://priyanshubishnoi.github.io/tech-blog/tag/system-design.html">System Design</a>
+        </li>
+    </ul>
+    <div class="flex w-full my-2 bg-zinc-200 dark:bg-zinc-700 rounded-lg">
+      <div class="w-1/2 rounded-l-lg"></div>
+    </div>
+  </footer>
+  <div>
+  </div>
+</main>
+
+    </div>
+    <footer class="flex w-full text-xs justify-center mt-10 mb-6 text-zinc-600 dark:text-zinc-400">
+        <div class="px-4">
+            <span></span>Powered by
+            <a class="underline" href="https://getpelican.com/">Pelican</a>&nbsp;&
+            <a class="underline" href="https://github.com/aleylara/Papyrus">Papyrus</a>
+        </div>
+    </footer>
+
+
+    <script>
+        let themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+        let themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia(
+                '(prefers-color-scheme: dark)').matches)) {
+            themeToggleLightIcon.classList.remove('hidden');
+        } else {
+            themeToggleDarkIcon.classList.remove('hidden');
+        }
+        let themeToggleBtn = document.getElementById('theme-toggle');
+        themeToggleBtn.addEventListener('click', function () {
+            themeToggleDarkIcon.classList.toggle('hidden');
+            themeToggleLightIcon.classList.toggle('hidden');
+            if (localStorage.getItem('color-theme')) {
+                if (localStorage.getItem('color-theme') === 'light') {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                }
+            } else {
+                if (document.documentElement.classList.contains('dark')) {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -3,6 +3,11 @@ html_selector = "main"
 base_directory = "D:\\Priyanshu Bishnoi\\Tech-blog\\blogs\\output"
 
 [[input.files]]
+path = "aspnetcore-request-flow.html"
+url = "/aspnetcore-request-flow.html"
+title = "How ASP.NET Core Actually Handles Your Requests (A System-Design Lens)"
+
+[[input.files]]
 path = "dll-system-design.html"
 url = "/dll-system-design.html"
 title = "DLLs - The Hidden System Design Boundaries"
