@@ -35,14 +35,12 @@ LINKS = (
 
 # Social widget
 SOCIAL = (
-    ("You can add links in your config file", "#"),
-    ("Another social link", "#"),
+    ("fab fa-linkedin", "https://www.linkedin.com/in/priyanshu-bishnoi-29a262000/"),
 )
 THEME = "themes/papyrus"
-PLUGIN_PATHS = ['pelican-plugins']
-PLUGINS = ['pelican_ga4']
-SEARCH_MODE = "output"
-SEARCH_HTML_SELECTOR = "article"  
+# PLUGIN_PATHS = ['pelican-plugins']
+PLUGINS = ['search']
+OUTPUT_PATH = "output/"
 GA4_MEASUREMENT_ID = "G-98GLR120T4"
 DEFAULT_PAGINATION = 10
 

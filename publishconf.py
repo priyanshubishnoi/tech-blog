@@ -16,9 +16,9 @@ THEME_STATIC_DIR = "theme"
 
 DELETE_OUTPUT_DIRECTORY = True
 
-PLUGIN_PATHS = ['pelican-plugins']
-PLUGINS = ['pelican_ga4']  # keep others if you add them
-
+# PLUGIN_PATHS = ['pelican-plugins']
+PLUGINS = ['search']  # keep others if you add them
+OUTPUT_PATH = "output/"
 FEED_ALL_ATOM = "feeds/all.atom.xml"
 CATEGORY_FEED_ATOM = "feeds/{slug}.atom.xml"
 GA4_MEASUREMENT_ID = "G-98GLR120T4"

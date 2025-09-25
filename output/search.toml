@@ -1,0 +1,23 @@
+[input]
+html_selector = "main"
+base_directory = "D:\\Priyanshu Bishnoi\\Tech-blog\\blogs\\output"
+
+[[input.files]]
+path = "aspnetcore-request-flow.html"
+url = "/aspnetcore-request-flow.html"
+title = "How ASP.NET Core Actually Handles Your Requests (A System-Design Lens)"
+
+[[input.files]]
+path = "dll-system-design.html"
+url = "/dll-system-design.html"
+title = "DLLs - The Hidden System Design Boundaries"
+
+[[input.files]]
+path = "inheritance-oop.html"
+url = "/inheritance-oop.html"
+title = "Inheritance in Object-Oriented Programming"
+
+[[input.files]]
+path = "cap-atm.html"
+url = "/cap-atm.html"
+title = "CAP Theorem Meets ATMs"
