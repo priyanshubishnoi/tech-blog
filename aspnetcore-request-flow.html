@@ -174,7 +174,7 @@
 <h2>1. DIP, Not Duct Tape</h2>
 <p>Core depends on <strong>interfaces</strong>, infra implements <strong>adapters</strong>. That separation is what makes your app replaceable and testable.</p>
 <h2>2. DI/IoC at the Composition Root</h2>
-<p>ASP.NET Core gives you <strong>DI out of the box</strong>. Wire dependencies in <strong>Program.cs</strong> or <strong>Startup.cs</strong> once. Don’t new-up things in controllers.</p>
+<p>ASP.NET Core gives you <strong>DI out of the box</strong>. Wire dependencies in <strong>Program.cs</strong> or <strong>Startup.cs</strong>(merged into <code>Program.cs</code> from dotnet 6.0 and above) once. Don’t new-up things in controllers.</p>
 <h2>3. Middleware Order Is Everything</h2>
 <p>Think of it as an <strong>assembly line</strong>. Break the contract, and things go wrong silently.</p>
 <h2>4. Stateless + Scale-out</h2>
