@@ -99,7 +99,7 @@ Core depends on **interfaces**, infra implements **adapters**. That separation i
 
 ## 2. DI/IoC at the Composition Root
 
-ASP.NET Core gives you **DI out of the box**. Wire dependencies in **Program.cs** or **Startup.cs** once. Don’t new-up things in controllers.
+ASP.NET Core gives you **DI out of the box**. Wire dependencies in **Program.cs** or **Startup.cs**(merged into `Program.cs` from dotnet 6.0 and above) once. Don’t new-up things in controllers.
 
 ## 3. Middleware Order Is Everything
 
