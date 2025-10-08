@@ -47,7 +47,7 @@ DEFAULT_PAGINATION = 10
 # Uncomment following line if you want document-relative URLs when developing
 # RELATIVE_URLS = True
 
-
+STATIC_PATHS = ['images']
 FEED_ALL_ATOM = FEED_ALL_RSS = CATEGORY_FEED_ATOM = TAG_FEED_ATOM = None
 TRANSLATION_FEED_ATOM = AUTHOR_FEED_ATOM = AUTHOR_FEED_RSS = None
 
